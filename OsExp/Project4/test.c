@@ -18,36 +18,36 @@ gcc  源文件名 -o 执行文件名
  就可执行该文件。
 */
 
-//#include<stdio.h>
-//#include<unistd.h>
-//
-//int main()
-//{
-//	pid_t pid1, pid2;
-//	if ((pid1 = fork()) < 0)
-//	{
-//		printf("fork error\n");
-//		return -1;
-//	}
-//	else if (pid1 == 0)     //子进程1
-//	{
-//		printf("child1: B\n");
-//		return 0;
-//	}
-//	if ((pid2 = fork()) < 0)
-//	{
-//		printf("fork error\n");
-//		return -1;
-//	}
-//	else if (pid2 == 0)
-//	{
-//		printf("child2: C\n");
-//		return 0;
-//	}
-//
-//	wait(pid1, NULL, 0);
-//	wait(pid2, NULL, 0);
-//	printf("parent: A\n");
-//	return 0;
-//}
+#include<stdio.h>
+#include<unistd.h>
+
+int main()
+{
+	pid_t pid1, pid2;
+	if ((pid1 = fork()) < 0)
+	{
+		printf("fork error\n");
+		return -1;
+	}
+	else if (pid1 == 0)     //子进程1
+	{
+		printf("child1: B\n");
+		return 0;
+	}
+	if ((pid2 = fork()) < 0)
+	{
+		printf("fork error\n");
+		return -1;
+	}
+	else if (pid2 == 0)
+	{
+		printf("child2: C\n");
+		return 0;
+	}
+
+	wait(pid1, NULL, 0);
+	wait(pid2, NULL, 0);
+	printf("parent: A\n");
+	return 0;
+}
 
