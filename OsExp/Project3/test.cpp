@@ -27,26 +27,26 @@
 using namespace std;
 
 #define CYLINDER 8
-#define TRACK 2
+#define MaxSize 64
 #define RECORD 4
 #define FREE 0
 #define OCCUPIED 1
 
 int bitMap[CYLINDER][CYLINDER];
 
-void Assign()
+struct Task
 {
-	int need = 0;
+	int name = -1;	//任务名
+	int need = -1;	//请求数
+	int x[MaxSize];	//存储柱面号（byte）
+	int y[MaxSize];	//存储磁道号和物理地址（bit）
+	struct Task* next;
+};
+
+//获取剩余磁盘空间数量
+int GetRest()  
+{
 	int rest = 0;
-	cout << "请输入需要分配的空间大小：" << endl;
-
-	cin >> need;
-	if (need <= 0)
-	{
-		cout << "请按要求输入数据！" << endl;
-		exit(0);
-	}
-
 	for (int i = 0; i < CYLINDER; i++)
 	{
 		for (int j = 0; j < CYLINDER; j++)
@@ -57,10 +57,40 @@ void Assign()
 			}
 		}
 	}
+	return rest;
+} 
 
-	if (need <= rest)
+//检查分配的任务名是否重名
+bool checkTaskName(Task*& head, int name)
+{
+	Task* phead = head;
+	Task* task = new Task;
+	task = phead->next;
+	if (task != NULL)
 	{
-		cout << "分配成功！" << endl;
+		if (task->name == name)
+		{
+			return false;
+		}
+		phead = phead->next;
+		task = phead->next;
+	}
+	return true;
+}
+
+//分配磁盘空间
+bool Assign(Task *&head, int name, int need)
+{
+	if (need <= GetRest() && checkTaskName(head, name))
+	{
+		Task* task = new Task;
+		task->next = head->next;
+		head->next = task;
+
+		task->name = name;
+		task->need = need;
+
+		int m = 0;
 		cout << "柱面\t磁道\t物理记录" << endl;
 		for (int i = 0; i < CYLINDER; i++)
 		{
@@ -70,49 +100,53 @@ void Assign()
 				{
 					if (need <= 0)
 					{
-						break;
+						return true;
 					}
 
 					bitMap[i][j] = OCCUPIED;
-
+					task->x[m] = i;
+					task->y[m] = j;
 					cout << i << "\t" << j / RECORD << "\t" << j % RECORD << endl;
-
+					m++;
 					need--;
 				}
 			}
 		}
 	}
-	else
-	{
-		cout << "分配失败!" << endl;
-	}
-
+	return false;
 }
 
-void Return()
+//回收磁盘空间
+bool Return(Task *&head, int name)
 {
-	int cylinder, track, record;
+	Task* phead = head;
+	Task* task = new Task;
+	task = phead->next;
+
 	int byte, bit;
 
-	cout << "请依次输入要回收的柱面号(0 - 7)、磁道号(0 - 2)、物理块号(0 - 3)：" << endl;
-
-	cin >> cylinder >> track >> record;
-	if (cylinder < 0 || cylinder>7 || track < 0 || track>2 || record < 0 || record>3)
+	while (task != NULL)
 	{
-		cout << "请按要求输入数据！" << endl;
-		exit(0);
+		if (name == task->name)
+		{
+			cout << "字节号\t" << "位数\t" << endl;
+			for (int i = 0; i < task->need; i++)
+			{
+				byte = task->x[i];
+				bit = task->y[i];
+				bitMap[byte][bit] = FREE;
+				cout << byte << "\t" << bit << endl;
+			}
+			phead->next = task->next;
+			return true;
+		}
+		phead = phead->next;
+		task = phead->next;
 	}
-
-	byte = cylinder;
-	bit = track * RECORD + record;
-
-	bitMap[byte][bit] = FREE;
-
-	cout << "归还成功！" << endl;
-	cout << "字节号\t" << "位数\t" << endl;
-	cout << byte << "\t" << bit << endl;
+	return false;
 }
 
+//显示位视图
 void Show()
 {
 	cout << "********************************位视图********************************" << endl;
@@ -136,7 +170,13 @@ void Show()
 
 int main()
 {
+	Task* head = new Task;
+	head->next = NULL;
+
 	int n;
+	int assignName = 0, need = 0;
+	int returnName = 0;
+
 	while (1)
 	{
 		Show();
@@ -145,10 +185,35 @@ int main()
 		switch (n)
 		{
 		case 1:
-			Assign();
+			
+			cout << "请依次输入需要分配的任务名（int）、空间大小：" << endl;
+			cin >> assignName >> need;
+			if (assignName < 0 || need <= 0 || need > MaxSize)
+			{
+				cout << "请按要求输入数据！" << endl;
+				exit(0);
+			}
+			if (Assign(head, assignName, need))
+			{
+				cout << "分配成功！" << endl;
+			}
+			else
+			{
+				cout << "分配失败！" << endl;
+			}
 			break;
 		case 2:
-			Return();
+			
+			cout << "请输入要释放磁盘空间的任务名：" << endl;
+			cin >> returnName;
+			if (Return(head, returnName))
+			{
+				cout << "归还成功！" << endl;
+			}
+			else
+			{
+				cout << "归还失败！" << endl;
+			}
 			break;
 		default:
 			exit(0);

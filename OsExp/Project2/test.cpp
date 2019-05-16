@@ -1,7 +1,10 @@
 /*
 可变分区管理方式下采用首次适应算法实现主存分配和回收
 [提示]：
-(1)	可变分区方式是按作业需要的主存空间大小来分割分区的。当要装入一个作业时，根据作业需要的主存容量查看是否有足够的空闲空间，若有，则按需分配，否则，作业无法装入。假定内存大小为128K，空闲区说明表格式为：
+(1)	可变分区方式是按作业需要的主存空间大小来分割分区的。
+当要装入一个作业时，根据作业需要的主存容量查看是否有足够的空闲空间，
+若有，则按需分配，否则，作业无法装入。
+假定内存大小为128K，空闲区说明表格式为：
 ·分区号——表示是第几个空闲分区；
 ·起始地址——指出空闲区的起始地址；
 ·长度——一个连续空闲区的长度；
@@ -29,26 +32,27 @@ struct Partition
 bool Insert(Partition*& head, Partition*& newTast);
 bool Recycle(Partition*& head, Partition*& deleteTask);
 
+
+//显示内存布局情况 分区号：0表示非空闲区，1...n 为空闲区
 void Show(Partition*& head)
 {
 	Partition* pHead = head;
 	Partition* p = new Partition;
 	cout << "************************空闲分区表****************************" << endl;
-	cout << "分区号\t" << "起始地址\t" << "长度\t" << endl;	
+	cout << "分区号\t" << "起始地址\t" << "长度\t" << "状态\t" << "作业名" << endl;
 	
 	
 	while (pHead->next != NULL)
 	{
 		p = pHead->next;
-		if (p->state == UNASSIGNED)
-		{
-			cout << p->num << "\t" << p->startAddr << "\t\t" << p->length << endl;
-		}
+		cout << p->num << "\t" << p->startAddr << "\t\t" << p->length << "\t" << p->state << "\t" << p->tasknum << endl;
+		
 		pHead = pHead->next;
 	}
 	cout << "************************空闲分区表****************************" << endl;
 }
 
+//分配空间
 void NewTask(Partition*& head)
 {
 	Partition* newTask = new Partition;
@@ -71,6 +75,7 @@ void NewTask(Partition*& head)
 
 }
 
+//插入到分区表
 bool Insert(Partition*& head, Partition*& newTask)
 {
 	Partition* phead = head;
@@ -85,6 +90,7 @@ bool Insert(Partition*& head, Partition*& newTask)
 
 			newTask->startAddr = p->startAddr;
 			newTask->state = ASSIGNED;
+			newTask->num = NULL;
 
 			p->startAddr += newTask->length;
 			p->length -= newTask->length;
@@ -116,6 +122,7 @@ bool Insert(Partition*& head, Partition*& newTask)
 	return false;
 }
 
+//回收空间
 void DeleteTask(Partition*& head)
 {
 	Partition* deleteTask = new Partition;

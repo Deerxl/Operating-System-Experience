@@ -29,6 +29,7 @@ struct PCB
 	struct PCB* next;
 };
 
+//设置进程初始值
 void SetPCB(PCB*& pcb, int i) 
 {
 	pcb->name = "P" + to_string(i);
@@ -53,6 +54,7 @@ void SetPCB(PCB*& pcb, int i)
 	pcb->status = 'R';
 }
 
+//根据优先级排序，从大到小
 void SortPriority(PCB *&head)
 {
 	PCB* p, * pre, * q;
@@ -70,6 +72,7 @@ void SortPriority(PCB *&head)
 	}
 }
 
+//运行
 bool Run(PCB*& head)
 {
 	PCB* pcb = new PCB;
@@ -85,6 +88,7 @@ bool Run(PCB*& head)
 	return pcb->time;
 }
 
+//显示每一次的运行/就绪情况
 void Show(PCB*& head)
 {
 	PCB* h = head;
