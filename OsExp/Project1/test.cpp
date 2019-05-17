@@ -30,26 +30,19 @@ struct PCB
 };
 
 //设置进程初始值
-void SetPCB(PCB*& pcb, int i) 
+void SetPCB(PCB*& pcb, int i)
 {
 	pcb->name = "P" + to_string(i);
-	
+
 	cout << "请为进程P" << i << "依次输入 进程优先数 和 要求运行时间：" << endl;
-	try
-	{
-		cin >> pcb->priority >> pcb->time;
-		if (pcb->priority < 0 || pcb->time < 0)
-		{
-			cout << "请按照要求输入数据！" << endl;
-			exit(0);
-		}
-		cout << endl;
-	}
-	catch(exception e)
+
+	cin >> pcb->priority >> pcb->time;
+	if (pcb->priority < 0 || pcb->time < 0)
 	{
 		cout << "请按照要求输入数据！" << endl;
 		exit(0);
 	}
+	cout << endl;
 
 	pcb->status = 'R';
 }

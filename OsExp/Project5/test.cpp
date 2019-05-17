@@ -185,24 +185,22 @@ void Nop()
 	;
 }
 
-/*模拟处理器指令执行程序：按“指令计数器”PC之值执行指定的指令，且PC加1指向下一条指令。
-*/
+//模拟处理器指令执行程序：按“指令计数器”PC之值执行指定的指令，且PC加1指向下一条指令。
 void Excute()
 {
 	i++;
 	int j = (pcbNow == producer) ? PA[i] : SA[i];
-
 	switch (j)
 	{
 	case 0:
-		Produce();
+		Produce(); 
 		pcbNow->state = states[1];
 		break;
 	case 1:
 		p();
 		break;
 	case 2:
-		Put();
+		Put(); 
 		pcbNow->state = states[1];
 		break;
 	case 3:
@@ -213,7 +211,7 @@ void Excute()
 		pcbNow->state = states[1];
 		break;
 	case 5:
-		Get();
+		Get(); 
 		pcbNow->state = states[1];
 		break;
 	case 6:
@@ -221,8 +219,7 @@ void Excute()
 		pcbNow->state = states[1];
 		break;
 	case 7:
-		Nop();
-		pcbNow->state = states[1];
+		Nop(); pcbNow->state = states[1];
 		break;
 	}
 }

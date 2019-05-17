@@ -94,7 +94,6 @@ bool Insert(Partition*& head, Partition*& newTask)
 
 			p->startAddr += newTask->length;
 			p->length -= newTask->length;
-
 			return true;
 		}
 		else if (p->length == newTask->length && (p->state == UNASSIGNED))
@@ -110,15 +109,12 @@ bool Insert(Partition*& head, Partition*& newTask)
 				{
 					p->num -= 1;
 				}
-				
 			}
-
 			return true;
 		}
 		phead = phead->next;
 		p = phead->next;
 	}
-
 	return false;
 }
 
@@ -162,7 +158,6 @@ bool Recycle(Partition*& head, Partition*& deleteTask)
 			{
 				p->num = pre->num + 1;
 			}
-
 			p->state = UNASSIGNED;
 			while (phead->next->next != NULL)
 			{
@@ -172,7 +167,6 @@ bool Recycle(Partition*& head, Partition*& deleteTask)
 				{
 					p->num += 1;
 				}
-				
 			}
 			return true;
 		}
