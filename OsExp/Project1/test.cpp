@@ -70,14 +70,8 @@ bool Run(PCB*& head)
 {
 	PCB* pcb = new PCB;
 	pcb = head->next;
-	
-	if (pcb->priority != 0)
-	{
-		pcb->priority = pcb->priority - 1;
-	}
-	
+	pcb->priority = pcb->priority - 1;
 	pcb->time = pcb->time - 1;
-
 	return pcb->time;
 }
 

@@ -146,40 +146,50 @@ bool Recycle(Partition*& head, Partition*& deleteTask)
 	Partition* p = new Partition;
 	p = phead->next;
 	Partition* pre = NULL;
+	Partition* pre2 = new Partition;
+	int flag = 0;
 	while (p != NULL)
 	{
 		if (p->tasknum == deleteTask->tasknum && p->state == ASSIGNED)
 		{
-			if (pre == NULL)
-			{
-				p->num = 1;
-			}
-			else
-			{
-				p->num = pre->num + 1;
-			}
+			(pre == NULL) ? (p->num = 1) : (p->num = pre->num + 1);
 			p->state = UNASSIGNED;
-			while (phead->next->next != NULL)
+			p->tasknum = 0;
+			while ((phead->next != NULL) && (phead->next->next != NULL) && (phead->next->next->state == UNASSIGNED))
 			{
-				phead = phead->next;
+				phead->next = phead->next->next;
 				p = phead->next;
-				if (p->state == UNASSIGNED)
-				{
-					p->num += 1;
-				}
+				p->startAddr = pre->startAddr;
+				p->length = pre->length + p->length;
 			}
-			return true;
+			flag = 1;
 		}
-		if (p->state == UNASSIGNED)
+		if (!flag)
 		{
 			pre = p;
-		}		
+		}
 		phead = phead->next;
 		p = phead->next;
 	}
-	return false;
+	Partition* phead1 = head;
+	Partition* q = new Partition;
+	q = phead1->next;
+	while (q != NULL)
+	{
+		if ((pre != NULL) && (pre->state == UNASSIGNED) && (q == pre))
+		{
+			phead1->next = phead1->next->next;
+			q = phead1->next;
+			q->startAddr = pre->startAddr;
+			q->length = pre->length + q->length;
+			q->tasknum = 0;
+			return true;
+		}
+		phead1 = phead1->next;
+		q = phead1->next;
+	}	
+	return true;
 }
-
 int main()
 {
 	Partition* head = new Partition;
